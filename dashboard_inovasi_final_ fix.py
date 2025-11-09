@@ -868,7 +868,7 @@ else:
 import streamlit as st
 import pandas as pd
 from itertools import combinations
-from google import genai
+import google.generativeai as genai
 
 st.subheader("6.5) Perbandingan Inovasi & Saran Kolaborasi AI (Cerdas & Kontekstual)")
 
@@ -1088,3 +1088,4 @@ else:
 
 st.markdown("---")
 st.caption('Aplikasi ini dibuat oleh TIM MAGANG MANDIRI UNESA — versi revisi: peta search & zoom ditambahkan')
+
