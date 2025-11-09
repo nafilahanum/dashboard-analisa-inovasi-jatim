@@ -6,10 +6,6 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from PIL import Image
-from sklearn.cluster import KMeans
-from streamlit_folium import st_folium
-from wordcloud import WordCloud
 
 # python -m streamlit run dashboard_inovasi.py -- cd c:/MAGANG/
 
@@ -1088,3 +1084,4 @@ else:
 
 st.markdown("---")
 st.caption('Aplikasi ini dibuat oleh TIM MAGANG MANDIRI UNESA — versi revisi: peta search & zoom ditambahkan')
+
