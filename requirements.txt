@@ -1,13 +1,19 @@
-# Core dependencies
+# =========================
+# CORE DEPENDENCIES
+# =========================
 streamlit
 pandas
 numpy
 
-# Visualisasi
+# =========================
+# VISUALISASI
+# =========================
 plotly
 matplotlib
 
-# Peta & geospasial
+# =========================
+# PETA & GEOSPASIAL
+# =========================
 folium
 streamlit-folium
 geopandas
@@ -15,12 +21,19 @@ shapely
 pyproj
 fiona
 
-# Machine learning / analisis tambahan
+# =========================
+# MACHINE LEARNING / ANALISIS
+# =========================
 scikit-learn
 
-# Google Generative AI (bagian saran kolaborasi AI)
+# =========================
+# GOOGLE AI INTEGRATION
+# =========================
+google
 google-generativeai
 
-# Optional utilities
-openpyxl        # untuk baca file Excel
-python-dotenv   # jika kamu pakai .env file untuk API key
+# =========================
+# UTILITAS TAMBAHAN
+# =========================
+openpyxl        # untuk membaca file Excel
+python-dotenv   # untuk load API key dari .env
