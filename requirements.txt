@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+scikit-learn
+plotly
+folium
+streamlit-folium
+Pillow
+wordcloud
+typing-extensions
