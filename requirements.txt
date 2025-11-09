@@ -9,4 +9,6 @@ Pillow
 wordcloud
 typing-extensions
 openpyxl
+google-generativeai
+
 
