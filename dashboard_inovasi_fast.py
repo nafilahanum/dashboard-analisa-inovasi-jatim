@@ -200,6 +200,7 @@ if 'Bentuk Inovasi' in df_filtered.columns:
 else:
     st.warning("Kolom 'Bentuk Inovasi' tidak ditemukan di data.")
 
+
 # 4) Jenis Inovasi (Digital vs Non Digital) + Timeline
 st.subheader("4) Jenis Inovasi (Digital vs Non Digital)")
 
