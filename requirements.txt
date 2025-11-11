@@ -30,10 +30,11 @@ scikit-learn
 # GOOGLE AI INTEGRATION
 # =========================
 google
-google-generativeai
+google-genai
 
 # =========================
 # UTILITAS TAMBAHAN
 # =========================
 openpyxl        # untuk membaca file Excel
 python-dotenv   # untuk load API key dari .env
+
