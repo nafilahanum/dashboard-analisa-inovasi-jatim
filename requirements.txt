@@ -36,5 +36,7 @@ google-genai
 # UTILITAS TAMBAHAN
 # =========================
 openpyxl        # untuk membaca file Excel
+xlsxwriter
 python-dotenv   # untuk load API key dari .env
+
 
