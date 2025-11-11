@@ -575,6 +575,7 @@ import pandas as pd
 import plotly.express as px
 from streamlit_folium import st_folium
 import folium
+from folium.plugins import Fullscreen, MiniMap
 
 st.subheader("5.5) Perbandingan Antar Wilayah (berdasarkan lokasi geografis aktual)")
 
@@ -609,10 +610,6 @@ if lat_col and lon_col:
     st.info("🔍 Mengidentifikasi nama daerah berdasarkan koordinat (offline cache aktif)...")
 
     def get_nearest_area(lat, lon, df_ref, threshold=0.01):
-        """
-        Mencocokkan koordinat dengan lokasi terdekat dari map_jatim.csv
-        threshold = toleransi jarak derajat (~1km)
-        """
         diff = abs(df_ref["lat"] - lat) + abs(df_ref["lon"] - lon)
         idx = diff.idxmin()
         if diff[idx] < threshold:
@@ -620,7 +617,6 @@ if lat_col and lon_col:
         else:
             return "Wilayah Jawa Timur (tidak teridentifikasi spesifik)"
 
-    # Gunakan cache agar cepat
     @st.cache_data(show_spinner=False)
     def map_coordinates_to_region(df, df_ref):
         df = df.copy()
@@ -651,10 +647,19 @@ if lat_col and lon_col:
 
     m = folium.Map(location=[center_lat, center_lon], zoom_start=11, tiles="cartodb positron")
 
+    # ✅ Tambahkan kontrol Fullscreen & MiniMap
+    Fullscreen(
+        position="topright",
+        title="Layar Penuh",
+        title_cancel="Keluar dari Layar Penuh",
+        force_separate_button=True
+    ).add_to(m)
+
+    MiniMap(toggle_display=True, position="bottomright").add_to(m)
+
     # Tentukan kolom daerah (untuk label popup)
     daerah_col = "Daerah" if "Daerah" in df_selected.columns else None
 
-    # Tambahkan marker dinamis dengan popup kaya informasi
     for _, row in df_selected.iterrows():
         popup_html = f"""
         <div style="font-size:14px">
@@ -666,13 +671,11 @@ if lat_col and lon_col:
             <i>{daerah_col if daerah_col else 'Daerah'}:</i> {row.get(daerah_col, '-')}
         """
 
-        # Tambahkan urusan utama dan urusan lain jika tersedia
         if 'Urusan Utama' in row and pd.notna(row['Urusan Utama']):
             popup_html += f"<br><b>Urusan Utama:</b> {row['Urusan Utama']}"
         if 'Urusan lain yang beririsan' in row and pd.notna(row['Urusan lain yang beririsan']):
             popup_html += f"<br><b>Urusan lain:</b> {row['Urusan lain yang beririsan']}"
 
-        # Tambahkan link video (jika ada)
         if 'Link Video' in row and pd.notna(row['Link Video']):
             link_video = str(row['Link Video']).strip()
             if link_video.lower() not in ['-', 'nan', 'none', '']:
@@ -688,9 +691,7 @@ if lat_col and lon_col:
             icon=folium.Icon(color="green", icon="info-sign")
         ).add_to(m)
 
-    # Tampilkan peta di Streamlit
     st_folium(m, width=900, height=500)
-
 
     # ======================================================
     # 6️⃣ RANGKUMAN DAN DISTRIBUSI
@@ -721,6 +722,7 @@ if lat_col and lon_col:
 
 else:
     st.warning("Kolom latitude dan longitude tidak ditemukan di data.")
+
 
 # ==========================================================
 # 6) PETA LOKASI INOVASI (DENGAN SEARCH & FIT-TO-SCREEN)
@@ -784,12 +786,11 @@ else:
     # Tentukan pusat peta (fit to data)
     center_lat = map_df['lat'].mean()
     center_lon = map_df['lon'].mean()
-    m = folium.Map(location=[center_lat, center_lon], zoom_start=5, tiles="cartodb positron", control_scale=True)
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=6, tiles="cartodb positron", control_scale=True)
 
-    # Plugin interaktif tambahan
-    Fullscreen(position='topright').add_to(m)
+    # Plugin interaktif tambahan (tambahkan setelah peta dibuat)
     LocateControl(auto_start=False).add_to(m)
-    MiniMap(toggle_display=True).add_to(m)
+    MiniMap(toggle_display=True, position='bottomright').add_to(m)
 
     # Cluster marker
     marker_cluster = MarkerCluster().add_to(m)
@@ -848,6 +849,9 @@ else:
         ]
         m.fit_bounds(bounds, padding=(30, 30))
 
+    # 🔁 Tambahkan Fullscreen di akhir agar tombolnya tampil di atas semua layer
+    Fullscreen(position='topleft', force_separate_button=True).add_to(m)
+
     # --- Daftar inovasi hanya muncul jika filter aktif ---
     if search_keyword.strip() or (daerah_col and daerah_selected != 'All'):
         st.markdown("### 📋 Daftar Inovasi yang Ditampilkan")
@@ -857,6 +861,7 @@ else:
 
     # --- Tampilkan peta ---
     st_folium(m, width=1200, height=600)
+
 
 # ==========================================================
 # 6.5) PERBANDINGAN INOVASI & SARAN KOLABORASI AI (CERDAS & KONTEKSTUAL)
@@ -1084,4 +1089,5 @@ else:
 
 st.markdown("---")
 st.caption('Aplikasi ini dibuat oleh TIM MAGANG MANDIRI UNESA — versi revisi: peta search & zoom ditambahkan')
+
 
