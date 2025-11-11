@@ -576,6 +576,15 @@ import plotly.express as px
 from streamlit_folium import st_folium
 import folium
 from folium.plugins import Fullscreen, MiniMap
+import streamlit.components.v1 as components
+
+# ======================================================
+# Inject library fullscreen agar JS-nya pasti termuat
+# ======================================================
+components.html("""
+<link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.css" />
+<script src="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.js"></script>
+""", height=0)
 
 st.subheader("5.5) Perbandingan Antar Wilayah (berdasarkan lokasi geografis aktual)")
 
@@ -585,7 +594,6 @@ st.subheader("5.5) Perbandingan Antar Wilayah (berdasarkan lokasi geografis aktu
 @st.cache_data
 def load_map_data():
     df_map = pd.read_csv("map_jatim.csv")
-    # Pastikan nama kolom seragam
     df_map.columns = df_map.columns.str.lower()
     return df_map
 
@@ -647,7 +655,7 @@ if lat_col and lon_col:
 
     m = folium.Map(location=[center_lat, center_lon], zoom_start=11, tiles="cartodb positron")
 
-    # ✅ Tambahkan kontrol Fullscreen & MiniMap
+    # ✅ Tambahkan tombol Fullscreen & MiniMap
     Fullscreen(
         position="topright",
         title="Layar Penuh",
@@ -657,7 +665,6 @@ if lat_col and lon_col:
 
     MiniMap(toggle_display=True, position="bottomright").add_to(m)
 
-    # Tentukan kolom daerah (untuk label popup)
     daerah_col = "Daerah" if "Daerah" in df_selected.columns else None
 
     for _, row in df_selected.iterrows():
@@ -675,12 +682,10 @@ if lat_col and lon_col:
             popup_html += f"<br><b>Urusan Utama:</b> {row['Urusan Utama']}"
         if 'Urusan lain yang beririsan' in row and pd.notna(row['Urusan lain yang beririsan']):
             popup_html += f"<br><b>Urusan lain:</b> {row['Urusan lain yang beririsan']}"
-
         if 'Link Video' in row and pd.notna(row['Link Video']):
             link_video = str(row['Link Video']).strip()
             if link_video.lower() not in ['-', 'nan', 'none', '']:
                 popup_html += f"<br><a href='{link_video}' target='_blank'>🎥 Tonton Video</a>"
-
         popup_html += "</div>"
 
         tooltip_text = row.get("Nama Inovasi", "Inovasi")
@@ -691,7 +696,8 @@ if lat_col and lon_col:
             icon=folium.Icon(color="green", icon="info-sign")
         ).add_to(m)
 
-    st_folium(m, width=900, height=500)
+    # ✅ Render map dengan container penuh agar plugin aktif
+    st_folium(m, width=None, height=550, use_container_width=True)
 
     # ======================================================
     # 6️⃣ RANGKUMAN DAN DISTRIBUSI
@@ -1089,5 +1095,6 @@ else:
 
 st.markdown("---")
 st.caption('Aplikasi ini dibuat oleh TIM MAGANG MANDIRI UNESA — versi revisi: peta search & zoom ditambahkan')
+
 
 
